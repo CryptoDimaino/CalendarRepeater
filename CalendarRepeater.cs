@@ -3,12 +3,12 @@ using System.Threading;
 
 namespace CalendarRepeater
 {
-    public class CalendarRepeater
+    public class CRepeater
     {
         private Timer _Timer;
         private DateTime _RepeatingDate;
-
-        private DateTime _OriginalStartDate;
+        private bool _End;
+        private DateTime _EndDate;
         private int _Minutes;
         private bool _Monthly;
         private bool _Weekly;
@@ -17,6 +17,8 @@ namespace CalendarRepeater
         private bool _Minutely;
 
         private bool _Debug;
+
+        private string str;
 
         public int Years { get; set; }
         public int Months { get; set; }
@@ -29,19 +31,19 @@ namespace CalendarRepeater
         public bool Daily { get; set; }
         public bool Hourly { get; set; }
 
-        public CalendarRepeater()
+        public CRepeater()
         {
             _RepeatingDate = DateTime.Now;
-            _OriginalStartDate = _RepeatingDate;
             _Monthly = false;
             _Weekly = false;
             _Daily = false;
             _Hourly = false;
             _Minutely = false;
             _Debug = false;
+            _End = false;
         }
 
-        public void CreateCalendarRepeater(Action RunnerMethod)
+        public void CreateCRepeater(Action RunnerMethod)
         {
             _Timer = new Timer(x => { RunnerMethod(); RepeaterFunctionRunner(); }, null, Timeout.Infinite, Timeout.Infinite);
         }
@@ -59,6 +61,16 @@ namespace CalendarRepeater
             {
                 Console.WriteLine("The Start Date needs to be in the future. Defaulting to DateTime.Now");
                 _RepeatingDate = DateTime.Now;
+            }
+        }
+
+        public void EndDateTimeForRepeater(int year, int month, int day, int hour, int minute, int second)
+        {
+            _EndDate = new DateTime(year, month, day, hour, minute, second);
+
+            if(_EndDate < DateTime.Now || _EndDate < _RepeatingDate)
+            {
+                Console.WriteLine("The End Date needs to be in the future. Defaulting to no End Date.");
             }
         }
 
@@ -94,13 +106,21 @@ namespace CalendarRepeater
 
         public void RepeaterFunctionRunner()
         {
-            Setup_CalendarRepeater();
+            Setup_CRepeater();
             Console.WriteLine("Type the string exit to leave.");
         }
 
-        public void Setup_CalendarRepeater()
+        public void Setup_CRepeater()
         {
             DateTime currentTime = DateTime.Now;
+
+            if(_End == false)
+            {
+                if(currentTime >= _EndDate || _RepeatingDate >= _EndDate)
+                {
+                    _End = true;
+                }
+            }
 
             if(currentTime > _RepeatingDate)
             {
@@ -141,6 +161,15 @@ namespace CalendarRepeater
             }
             
             _Timer.Change(tickTime, TimeSpan.FromMilliseconds(1));
+        }
+
+        public void ExitLoop()
+        {
+            do
+            {
+                Console.WriteLine("Type the string exit to leave.");
+                str = Console.ReadLine();
+            }while(!str.Equals("exit") && !_End);
         }
     }
 }
