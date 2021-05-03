@@ -8,7 +8,7 @@ namespace CalendarRepeater
         private Timer _Timer;
         private DateTime _RepeatingDate;
         private bool _End;
-        private DateTime _EndDate;
+        private DateTime? _EndDate;
         private int _Minutes;
         private bool _Monthly;
         private bool _Weekly;
@@ -34,6 +34,7 @@ namespace CalendarRepeater
         public CRepeater()
         {
             _RepeatingDate = DateTime.Now;
+            _EndDate = null;
             _Monthly = false;
             _Weekly = false;
             _Daily = false;
@@ -107,7 +108,7 @@ namespace CalendarRepeater
         public void RepeaterFunctionRunner()
         {
             Setup_CRepeater();
-            Console.WriteLine("Type the string exit to leave.");
+            Console.WriteLine("Press enter to exit.");
         }
 
         public void Setup_CRepeater()
@@ -155,9 +156,10 @@ namespace CalendarRepeater
             // Debug
             if(_Debug == true)
             {
-                Console.WriteLine($"currentTime: {currentTime}");
-                Console.WriteLine($"timerRunningTime: {_RepeatingDate}");
-                Console.WriteLine($"tickTime: {tickTime}");
+                Console.WriteLine($"Current Time: {currentTime}");
+                Console.WriteLine($"Repeating Date: {_RepeatingDate}");
+                Console.WriteLine($"End Date: {_EndDate}");
+                Console.WriteLine($"Tick Time: {tickTime}");
             }
             
             _Timer.Change(tickTime, TimeSpan.FromMilliseconds(1));
@@ -167,7 +169,7 @@ namespace CalendarRepeater
         {
             do
             {
-                Console.WriteLine("Type the string exit to leave.");
+                Console.WriteLine("Press enter to exit.");
                 str = Console.ReadLine();
             }while(!str.Equals("exit") && !_End);
         }
